@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { createUser, findUserByUsername, getUsers } = require('../models/userModel');
+const { createUser, findUserByUsername, getUsers, UpdateUser, DeleteUser } = require('../models/userModel');
 
 require('dotenv').config();
 
@@ -50,4 +50,30 @@ const getAllUsers = async (req, res) =>{
     }
 }
 
-module.exports = {registerUser, loginUser, getAllUsers}
+const updateUser = async (req, res) =>{
+    const { id } = req.params;
+    const { nombres, apellidos, correo, usuario, contrasena, direccion, fecha_nacimiento, telefono, codigo_seguridad } = req.body;
+
+    try{
+        const user = await UpdateUser(id, { nombres, apellidos, correo, usuario, contrasena, direccion, fecha_nacimiento, telefono, codigo_seguridad });
+        res.json(user);
+    }
+    catch(error){
+        res.status(500).json({error: error.message});
+    }
+
+}
+
+const deleteUser = async (req, res) =>{
+    const { id } = req.params;
+    try{
+        await DeleteUser(id);
+        res.json({message: 'Usuario eliminado correctamente'});
+    }
+    catch(error){
+        res.status(500).json({error: error.message});
+    }
+
+}
+
+module.exports = {registerUser, loginUser, getAllUsers, updateUser, deleteUser}
